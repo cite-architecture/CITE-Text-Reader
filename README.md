@@ -13,3 +13,5 @@ For much, much more complicated examples, including external Javascript librarie
 - <https://github.com/cite-architecture/Server-CITE-App>
 
 Questions via Issue tracker.
+
+Original code released under CC0, to the Public Domain. Dependent libraries and the examples linked above have their own license terms.
