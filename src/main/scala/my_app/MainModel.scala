@@ -13,9 +13,7 @@ import scala.concurrent
 
 import scala.scalajs.js
 import scala.scalajs.js._
-import edu.holycross.shot.cite._
 import js.annotation._
-import edu.holycross.shot.scm._
 
 
 @JSExportTopLevel("my_app.MainModel")
@@ -24,9 +22,8 @@ object MainModel {
 		val userMessage = Var("Main loaded.")
 		val userAlert = Var("default")
 	   val userMessageVisibility = Var("app_hidden")
-
 		var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
 
-		val currentLibraryMetadataString = Var("No library loaded.")
+		val welcomeMessage = Var("")
 
 }
