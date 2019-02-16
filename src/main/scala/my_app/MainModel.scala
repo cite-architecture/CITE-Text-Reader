@@ -16,7 +16,7 @@ import scala.scalajs.js._
 import js.annotation._
 
 
-@JSExportTopLevel("my_app.MainModel")
+@JSExportTopLevel("MainModel")
 object MainModel {
 
 		val userMessage = Var("Main loaded.")

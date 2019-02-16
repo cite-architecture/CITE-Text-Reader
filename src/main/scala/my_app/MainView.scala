@@ -15,7 +15,7 @@ import scala.scalajs.js.annotation.JSExport
 import js.annotation._
 
 
-@JSExportTopLevel("my_eapp.MainView")
+@JSExportTopLevel("MainView")
 object MainView {
 	//val textView = O2View.o2div
 

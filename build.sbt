@@ -8,12 +8,20 @@ scalaVersion := "2.12.4"
 
 resolvers += Resolver.jcenterRepo
 resolvers += Resolver.bintrayRepo("neelsmith", "maven")
+resolvers += Resolver.bintrayRepo("eumaeus", "maven")
 resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases")
 
 libraryDependencies ++= Seq(
   "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided",
   "org.scala-js" %%% "scalajs-dom" % "0.9.5",
   "io.monix" %%% "monix" % "2.3.0",
+  "edu.holycross.shot.cite" %%% "xcite" % "3.7.0",
+  "edu.holycross.shot" %%% "ohco2" % "10.11.1",
+  "edu.holycross.shot" %%% "scm" % "6.2.0",
+  "edu.holycross.shot" %%% "citeobj" % "7.2.0",
+  "edu.holycross.shot" %%% "citerelations" % "2.4.0",
+  "edu.holycross.shot" %%% "cex" % "6.2.1",
+  "edu.furman.classics" %%% "citealign" % "0.1.0",
   "com.thoughtworks.binding" %%% "dom" % "latest.version"
 )
 

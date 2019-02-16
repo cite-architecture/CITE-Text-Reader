@@ -17,7 +17,7 @@ import monix.eval._
 
 import scala.scalajs.js.annotation.JSExport
 
-@JSExportTopLevel("my_app.MainController")
+@JSExportTopLevel("MainController")
 object MainController {
 
 
