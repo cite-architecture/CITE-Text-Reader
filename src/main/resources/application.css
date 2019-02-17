@@ -284,6 +284,8 @@ div.o2_versionContainer {
 	float: left;
 	margin-right: 2em;
 	margin-top: 15px;
+	background-color: #fcfcfc;
+	padding: 4px;
 }
 
 .oneOf1 {
@@ -446,11 +448,13 @@ div.o2_1_cols{
 
 
 div#o2_citedWorksMenu.dropdown, div#ngram_citedWorksMenu.dropdown, div#ngram_previousSearchMenu.dropdown {
-	width: 17em;
-	min-width: 17em;
-	float:right;
-	font-size: 85%;
-	margin-right: 2em;
+width: 8em;
+/* min-width: 17em; */
+/* float: right; */
+font-size: 85%;
+/* margin-right: 2em; */
+	background-color: #fcfcfc;
+
 }
 
 span#o2_citedWorksMenuTitle, span#ngram_citedWorksMenuTitle {
@@ -462,6 +466,7 @@ div#o2_urnHistoryMenu.dropdown {
 	font-size: 85%;
 	max-width: 20em;
 	margin-top: 0.5em;
+	background-color: #fcfcfc;
 }
 
 div#o2_urnHistoryButton {
@@ -617,6 +622,7 @@ html,
 body {
 	height: 100%;
 	padding: 15px;
+	background-color: ##f6f6f6;
 }
 
 #main-wrapper {

@@ -24,7 +24,7 @@ object O2Model {
 
 	case class VersionNodeBlock(versionUrn:Var[CtsUrn],nodes:Vars[CitableNode])
 
-	case class BoundCorpus(versionUrn:Var[CtsUrn], versionLabel:Var[String], versionNodes:Vars[VersionNodeBlock] )
+	case class BoundCorpus(versionUrn:Var[CtsUrn], versionLabel:Var[String], versionNodes:Vars[VersionNodeBlock], currentPrev:Var[Option[CtsUrn]] = Var[Option[CtsUrn]](None), currentNext:Var[Option[CtsUrn]] = Var[Option[CtsUrn]](None) )
 
 	val currentCorpus = Vars.empty[BoundCorpus]
 
@@ -73,18 +73,24 @@ object O2Model {
 
 	/* Some methods for working the model */
 	def versionsForUrn(urn:CtsUrn):Int = {
-		var versions = 0
-		if (O2Model.textRepo.value != None){
+		O2Model.textRepo.value match {
+			case None => 0
+			case Some(tr) => {
 				val s = s"urn:cts:${urn.namespace}:${urn.textGroup}.${urn.work}:"
-				val versionVector = O2Model.textRepo.value.get.catalog.entriesForUrn(CtsUrn(s))
-				versions = versionVector.size
+				val versionVector = tr.catalog.entriesForUrn(CtsUrn(s))
+				versionVector.size
+			}
 		}
-		versions
 	}
 
 	def getPrevNextUrn(urn:CtsUrn):Unit = {
 		O2Model.currentPrev.value = O2Model.textRepo.value.get.corpus.prevUrn(urn)
 		O2Model.currentNext.value = O2Model.textRepo.value.get.corpus.nextUrn(urn)
+	}
+
+	def getPrevNextUrn(urn:CtsUrn, boundCorp:BoundCorpus):Unit = {
+		boundCorp.currentPrev.value = O2Model.textRepo.value.get.corpus.prevUrn(urn)
+		boundCorp.currentNext.value = O2Model.textRepo.value.get.corpus.nextUrn(urn)
 	}
 
 	def collapseToWorkUrn(urn:CtsUrn):CtsUrn = {

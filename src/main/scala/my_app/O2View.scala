@@ -48,7 +48,6 @@ object O2View {
 		}
 
 		<div id="o2_Container">
-		{ citedWorksMenu.bind }
 		
 
 		{ o2messageDiv.bind }
@@ -66,10 +65,9 @@ object O2View {
 		onkeyup={ urnValidatingKeyUpHandler }>
 		</input>
 
+	{ O2View.citedWorksMenu.bind }
 	{ O2View.retrievePassageButton.bind }
-	{ O2View.addTextButton.bind }
-	{ O2View.seeAllVersionsButton.bind }
-
+	{ O2View.clearAll.bind }
 	<br/>
 	</p>
 
@@ -103,7 +101,7 @@ def retrievePassageButton = {
 		disabled={ (O2Controller.validUrnInField.bind == false) }
 > {
 	if ( O2Controller.validUrnInField.bind == true ){
-		"Retrieve Passage"
+		"Load Passage from URN"
 	} else {
 		"Invalid URN"
 	}
@@ -115,7 +113,7 @@ def retrievePassageButton = {
 @dom
 def seeAllVersionsButton = {
 	<button
-		disabled = { if (O2Model.versionsForCurrentUrn.bind > 0) false else true }
+		disabled = { if (O2Model.versionsForCurrentUrn.bind > 1) false else true }
 		onclick = { event: Event => {
 				O2Model.displayUrn.value = O2Model.collapseToWorkUrn(O2Model.urn.value)
 				O2Model.displayNewPassage(O2Model.displayUrn.value)
@@ -123,6 +121,11 @@ def seeAllVersionsButton = {
 	>
 		See All Versions of Passage
 	</button>
+}
+
+@dom
+def clearAll = {
+	<button>Clear All</button>
 }
 
 /* Passage Container */
@@ -198,6 +201,7 @@ def textVersionContainer(vCorp:O2Model.BoundCorpus) = {
 def textNavigationButtons(vCorp:O2Model.BoundCorpus) = {
 	<div class="o2_navLinks">
 			<button class="o2_prevLink">←</button>
+			{ O2View.seeAllVersionsButton.bind }
 			<button class="o2_removeLink">remove</button>
 			<button class="o2_nextLink">→</button>
 	</div>
@@ -293,7 +297,7 @@ def citedWorksMenu = {
 				"dropdown"
 			} 
 	} >
-	<span id="o2_citedWorksMenuTitle">Cited Works</span>
+	<span id="o2_citedWorksMenuTitle">Add Text</span>
 	{ O2View.citedWorksMenuItems.bind }
 	</div>
 }
@@ -324,7 +328,7 @@ def workUrnSpan(urn:CtsUrn, s:String) = {
 	class="app_clickable"
 	onclick={ event: Event => {
 		O2Controller.insertFirstNodeUrn(urn)
-		O2Model.clearPassage
+		//O2Model.clearPassage
 		}
 	}>
 	{ s }
