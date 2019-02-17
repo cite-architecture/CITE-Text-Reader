@@ -67,6 +67,18 @@ object O2Controller {
 		}
 	}
 
+	def removeThisText(vCorp:O2Model.BoundCorpus):Unit = {
+		O2Model.removeTextFromCurrentCorpus(vCorp)
+	}
+
+	def getPrev(vCorp:O2Model.BoundCorpus):Unit = {
+		g.console.log(s"Will get prev for text: ${vCorp.versionUrn.value}")
+	}
+
+	def getNext(vCorp:O2Model.BoundCorpus):Unit = {
+		g.console.log(s"Will get next for text: ${vCorp.versionUrn.value}")
+	}
+
 	def getNext:Unit = {
 		if (O2Model.currentNext.value != None){
 			changeUrn(O2Model.currentNext.value.get)

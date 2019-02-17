@@ -2,7 +2,7 @@
 
 A bare-bones skeleton for a CITE Reading Environment as a ScalaJS app.
 
-## Current version: 0.0.2
+## Current version: 0.0.3
 
 See [release notes](releases.md).
 

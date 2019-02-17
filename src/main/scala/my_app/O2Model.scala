@@ -111,6 +111,23 @@ object O2Model {
 		}	
 	}
 
+	def removeTextFromCurrentCorpus(vCorp:O2Model.BoundCorpus):Unit = {
+		try {
+			val tempCorpus:Vector[O2Model.BoundCorpus] = {
+				O2Model.currentCorpus.value.toVector.filter(_ != vCorp)
+			}
+			O2Model.currentCorpus.value.clear
+			for ( tc <- tempCorpus){
+				O2Model.currentCorpus.value += tc 
+			}	
+
+		} catch {
+			case e:Exception => {
+				O2Controller.updateUserMessage(s"O2Model Exception in 'removeTextFromCurrentCorpus': ${e}",2)
+			}
+		}
+	}
+
 	def updateCurrentCorpus(c:Corpus, u:CtsUrn):Unit = {
 		try {
 			O2Model.currentCorpus.value.clear

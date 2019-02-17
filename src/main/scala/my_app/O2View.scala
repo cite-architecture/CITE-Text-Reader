@@ -125,7 +125,10 @@ def seeAllVersionsButton = {
 
 @dom
 def clearAll = {
-	<button>Clear All</button>
+	<button 
+		onclick = { event: Event => {
+			O2Model.clearPassage
+	}} >Clear All</button>
 }
 
 /* Passage Container */
@@ -197,15 +200,6 @@ def textVersionContainer(vCorp:O2Model.BoundCorpus) = {
 	</div>
 }
 
-@dom
-def textNavigationButtons(vCorp:O2Model.BoundCorpus) = {
-	<div class="o2_navLinks">
-			<button class="o2_prevLink">←</button>
-			{ O2View.seeAllVersionsButton.bind }
-			<button class="o2_removeLink">remove</button>
-			<button class="o2_nextLink">→</button>
-	</div>
-}
 
 @dom
 def versionNodes(vCorp:O2Model.BoundCorpus) = {
@@ -263,8 +257,47 @@ def textVersionLabelAndLink(u:CtsUrn, label:String) = {
 	{ passageUrnSpan(u, label).bind }	
 }
 
+/* Individual Text Navigation Buttons */
+@dom
+def textNavigationButtons(vCorp:O2Model.BoundCorpus) = {
+	<div class="o2_navLinks">
+			{ O2View.versionNavPrevButton(vCorp).bind }
+			{ O2View.seeAllVersionsButton.bind }
+			{ O2View.versionRemoveButton(vCorp).bind }
+			{ O2View.versionNavNextButton(vCorp).bind }
+	</div>
+}
 
-/* Navigation Buttons */
+@dom
+def versionRemoveButton(vCorp:O2Model.BoundCorpus) = {
+	<button class="o2_removeLink navButton"
+			onclick={ event: Event => O2Controller.removeThisText(vCorp) }
+	>remove</button>
+}
+
+@dom
+def versionNavPrevButton(vCorp:O2Model.BoundCorpus) = {
+	<button class="o2_prevLink navButton"
+			onclick={ event: Event => O2Controller.getPrev(vCorp) }
+			disabled= {
+				(vCorp.currentPrev.bind == None)
+			}
+	>←</button>
+}
+
+@dom
+def versionNavNextButton(vCorp:O2Model.BoundCorpus) = {
+	<button class="o2_nextLink navButton"
+			onclick={ event: Event => O2Controller.getNext(vCorp) }
+			disabled= {
+				(vCorp.currentNext.bind == None)
+			}
+	>→</button>
+}
+
+
+
+/* Global Navigation Buttons */
 @dom
 def nextButton = {
 	<button

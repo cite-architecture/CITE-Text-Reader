@@ -30,6 +30,8 @@ object MainController {
 	*/
 	@JSExport
 	def main(libUrl: String): Unit = {
+		val task = Task{ MainController.loadRemoteLibrary(libUrl) }
+		val future = task.runAsync
 		dom.render(document.body, MainView.mainDiv)
 		welcomeUser
 	}
@@ -53,6 +55,25 @@ object MainController {
 	def welcomeUser:Unit = {
 		MainController.updateUserMessage(s"Welcoming user.", 0)
 		MainModel.welcomeMessage.value = "Welcome User!"	
+	}
+
+/*
+		Use AJAX request to get remote CEX file; update repository with CEX data
+	*/
+	def loadRemoteLibrary(url: String):Unit = {
+
+		val xhr = new XMLHttpRequest()
+		xhr.open("GET", url )
+		xhr.onload = { (e: Event) =>
+			if (xhr.status == 200) {
+				val contents:String = xhr.responseText
+				MainModel.requestParameterUrn.value = MainController.getRequestUrn
+				MainController.updateRepository(contents)
+			} else {
+				MainController.updateUserMessage(s"Request for remote library failed with code ${xhr.status}",2)
+			}
+		}
+		xhr.send()
 	}
 
 	/*
