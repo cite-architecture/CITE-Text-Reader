@@ -1,8 +1,8 @@
 enablePlugins(ScalaJSPlugin, BuildInfoPlugin)
 
-name := "my_app"
+name := "reader"
 
-version := "0.0.1"
+version := "0.0.2"
 
 scalaVersion := "2.12.4"
 
@@ -36,4 +36,4 @@ import scala.io.Source
 import java.io.PrintWriter
 
 buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
-buildInfoPackage := "my_app"
+buildInfoPackage := "reader"

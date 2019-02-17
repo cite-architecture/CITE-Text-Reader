@@ -1,4 +1,4 @@
-package my_app 
+package reader 
 import com.thoughtworks.binding.{Binding, dom}
 import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars}
 import scala.scalajs.js
@@ -11,6 +11,10 @@ import scala.scalajs.js.Dynamic.{ global => g }
 import org.scalajs.dom._
 import org.scalajs.dom.ext._
 import org.scalajs.dom.raw._
+import edu.holycross.shot.cite._
+import edu.holycross.shot.scm._
+import edu.holycross.shot.ohco2._
+import edu.holycross.shot.citeobj._
 
 import monix.execution.Scheduler.Implicits.global
 import monix.eval._
@@ -43,7 +47,7 @@ object MainController {
 			case 2 => MainModel.userAlert.value = "warn"
 		}
 		js.timers.clearTimeout(MainModel.msgTimer)
-		MainModel.msgTimer = js.timers.setTimeout(10000){ MainModel.userMessageVisibility.value = "app_hidden" }
+		MainModel.msgTimer = js.timers.setTimeout(6000){ MainModel.userMessageVisibility.value = "app_hidden" }
 	}
 
 	def welcomeUser:Unit = {
@@ -51,6 +55,195 @@ object MainController {
 		MainModel.welcomeMessage.value = "Welcome User!"	
 	}
 
+	/*
+		Loads library from local CEX file; updates repository
+	*/
+	def loadLocalLibrary(e: Event):Unit = {
+		val reader = new org.scalajs.dom.raw.FileReader()
+		MainController.updateUserMessage("Loading local library.",0)
+		reader.readAsText(e.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement].files(0))
+		reader.onload = (e: Event) => {
+			val contents = reader.result.asInstanceOf[String]
+			MainModel.requestParameterUrn.value = MainController.getRequestUrn
+			MainController.updateRepository(contents)
+		}
+	}
 
+	/* 
+		Gets the http url and splits off any request parameter, parsing
+		it as a CTS or CITE2 URN if possible
+	*/	
+	def getRequestUrn:Option[Urn] = {
+		val currentUrl = 	js.Dynamic.global.location.href
+		val requestParamUrnString = currentUrl.toString.split('?')
+		val requestUrn:Option[Urn] = requestParamUrnString.size match {
+			case s if (s > 1) => {
+				try {
+					val parts = requestParamUrnString(1).split("=")
+					if ( parts.size > 1) {
+						if ( parts(0) == "urn" ) {
+							val decryptedString:String = js.URIUtils.decodeURIComponent(parts(1))
+							val decryptedUrn:Option[Urn] = {
+								parts(1).take(8) match {
+									case ("urn:cts:") => Some(CtsUrn(decryptedString))
+									case ("urn:cite") => Some(Cite2Urn(decryptedString).dropProperty)
+										case _ => {
+											None
+										}
+									}
+								}
+								decryptedUrn
+							} else {
+								None
+							}
+						} else {
+							None
+						}
+					} catch {
+						case e:Exception => {
+							MainController.updateUserMessage(s"Failed to load request-parameter URN: ${e}",1)
+							None
+						}
+					}
+				}
+				case _  => {
+					None
+				}
+			}
+			requestUrn
+		}
+
+	// Reads CEX file, creates repositories for Texts, Objects, and Images
+	// *** Apropos Microservice ***
+	@dom
+	def updateRepository(cexString: String) = {
+		//hideTabs
+		//clearRepositories
+
+
+		try {
+			// Set up repo 
+			val repo:CiteLibrary = CiteLibrary(cexString, MainModel.cexMainDelimiter, MainModel.cexSecondaryDelimiter)
+			val mdString = s"Repository: ${repo.name}. Library URN: ${repo.urn}. License: ${repo.license}"
+			var loadMessage:String = ""
+
+			MainModel.mainLibrary.value = Some(repo)
+
+			// Text Repository Stuff
+			repo.textRepository match {
+				case Some(tr) => {
+					MainModel.showTexts.value = true
+					MainModel.currentLibraryMetadataString.value = mdString
+					O2Model.textRepo.value = Some(tr)
+					MainController.updateUserMessage(s"Updated text repository: ${ O2Model.textRepo.value.get.catalog.size } works. ",0)
+					loadMessage += s"Updated text repository: ${ O2Model.textRepo.value.get.catalog.size } works. "
+					O2Model.updateCitedWorks
+					O2Model.clearPassage
+
+					O2Controller.preloadUrn
+				}
+				case None => {
+					loadMessage += "No texts. "
+				}
+			}
+			g.console.log(s"Initialized TextRepository.")
+
+			// Collection Repository Stuff
+			/*
+			timeStart = new js.Date().getTime()
+			repo.collectionRepository match {
+				case Some(cr) => {
+					CiteMainModel.showCollections.value = true
+					val numCollections:Int = cr.collections.size
+					val numObjects:Int = cr.citableObjects.size
+					loadMessage += s" ${numCollections} collections. ${numObjects} objects. "
+					ObjectModel.collRep.value	= Some(cr)			
+					ObjectModel.clearObject
+					ObjectModel.updateCollections
+				}
+				case None => {
+					loadMessage += "No Collections. "	
+				}
+			}
+			timeEnd = new js.Date().getTime()
+			g.console.log(s"Initialized collectionRepository in ${(timeEnd - timeStart)/1000} seconds.")
+			*/
+
+			// Relations stuff
+			/*
+			timeStart = new js.Date().getTime()
+			RelationsModel.clearRelations
+			repo.relationSet match {
+				case Some(rs) => {
+					RelationsModel.citeRelations.value = Some(rs)
+					CiteMainModel.showRelations.value = true
+					RelationsModel.loadAllVerbs
+				}
+				case None => {
+					RelationsModel.citeRelations.value = None
+					CiteMainModel.showRelations.value = false 
+				}
+			}
+			timeEnd = new js.Date().getTime()
+			g.console.log(s"Initialized CiteRelations in ${(timeEnd - timeStart)/1000} seconds.")
+			*/
+
+			// Data Model Stuff
+			/*
+			timeStart = new js.Date().getTime()
+			repo.dataModels match {
+				case Some(dm) => {
+					DataModelModel.dataModels.value = Some(dm)
+					CiteBinaryImageController.discoverProtocols
+					CiteBinaryImageController.setImageSwitch
+					CiteBinaryImageModel.hasBinaryImages.value match {
+						case true => CiteMainModel.showImages.value = true 
+						case _ => CiteMainModel.showImages.value = false
+					}
+					CiteBinaryImageController.setBinaryImageCollections
+					CommentaryModel.loadAllComments
+				}
+				case None => { 
+					DataModelController.clearDataModels
+				}
+			}
+			timeEnd = new js.Date().getTime()
+			g.console.log(s"Initialized DataModels in ${(timeEnd - timeStart)/1000} seconds.")
+			g.console.log(s"=====================")
+			g.console.log(s"Whole initialization in ${(timeEnd - wholeTimeStart)/1000} seconds.")
+			g.console.log(s"=====================")
+			*/
+
+
+
+			//checkDefaultTab
+
+			MainController.updateUserMessage(loadMessage,0)
+
+			// Load request parameter
+			/*
+			MainModel.requestParameterUrn.value match {
+				case Some(u) => {
+					u match {
+						case CtsUrn(ctsurn) => {
+							DataModelController.retrieveTextPassage(None, CtsUrn(ctsurn))
+						}
+						case Cite2Urn(cite2urn) => {
+							DataModelController.retrieveObject(None, Cite2Urn(cite2urn))
+						}
+						case _ => // do nothing
+					}
+				}	
+				case None => // do nothing
+			}
+			*/
+
+		} catch  {
+			case e: Exception => {
+				MainController.updateUserMessage(s"""${e}. Invalid CEX file.""",2)
+			}
+		}
+
+	}
 
 }
