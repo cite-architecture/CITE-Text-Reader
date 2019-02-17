@@ -111,9 +111,9 @@ def retrievePassageButton = {
 }
 
 @dom
-def seeAllVersionsButton = {
+def seeAllVersionsButton(vCorp:O2Model.BoundCorpus) = {
 	<button
-		disabled = { if (O2Model.versionsForCurrentUrn.bind > 1) false else true }
+		disabled = { if (vCorp.versionsAvailable.bind > 1) false else true }
 		onclick = { event: Event => {
 				O2Model.displayUrn.value = O2Model.collapseToWorkUrn(O2Model.urn.value)
 				O2Model.displayNewPassage(O2Model.displayUrn.value)
@@ -262,7 +262,7 @@ def textVersionLabelAndLink(u:CtsUrn, label:String) = {
 def textNavigationButtons(vCorp:O2Model.BoundCorpus) = {
 	<div class="o2_navLinks">
 			{ O2View.versionNavPrevButton(vCorp).bind }
-			{ O2View.seeAllVersionsButton.bind }
+			{ O2View.seeAllVersionsButton(vCorp).bind }
 			{ O2View.versionRemoveButton(vCorp).bind }
 			{ O2View.versionNavNextButton(vCorp).bind }
 	</div>

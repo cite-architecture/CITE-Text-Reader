@@ -32,7 +32,7 @@ object O2Controller {
 		val newUrn: CtsUrn = O2Model.urn.value
 		O2Model.updateUrnHistory(newUrn)
 		val task1 = Task{
-				O2Model.versionsForCurrentUrn.value = O2Model.versionsForUrn(newUrn)
+				//O2Model.versionsForCurrentUrn.value = O2Model.versionsForUrn(newUrn)
 				O2Model.displayPassage(newUrn)
 				val timeEnd = new js.Date().getTime()
 				O2Controller.updateUserMessage(s"Fetched ${O2Model.currentNumberOfCitableNodes.value} citation objects in ${(timeEnd - timeStart)/1000} seconds.",0)

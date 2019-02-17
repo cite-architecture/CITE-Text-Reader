@@ -13,6 +13,8 @@ import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 import scala.collection.immutable.SortedMap
+import monix.execution.Scheduler.Implicits.global
+import monix.eval._
 
 import scala.scalajs.js.annotation.JSExport
 import js.annotation._
@@ -24,7 +26,7 @@ object O2Model {
 
 	case class VersionNodeBlock(versionUrn:Var[CtsUrn],nodes:Vars[CitableNode])
 
-	case class BoundCorpus(versionUrn:Var[CtsUrn], versionLabel:Var[String], versionNodes:Vars[VersionNodeBlock], currentPrev:Var[Option[CtsUrn]] = Var[Option[CtsUrn]](None), currentNext:Var[Option[CtsUrn]] = Var[Option[CtsUrn]](None) )
+	case class BoundCorpus(versionUrn:Var[CtsUrn], versionLabel:Var[String], versionNodes:Vars[VersionNodeBlock], currentPrev:Var[Option[CtsUrn]] = Var[Option[CtsUrn]](None), currentNext:Var[Option[CtsUrn]] = Var[Option[CtsUrn]](None), versionsAvailable:Var[Int] = Var(1) )
 
 	val currentCorpus = Vars.empty[BoundCorpus]
 
@@ -58,7 +60,7 @@ object O2Model {
 	val urn = Var(CtsUrn("urn:cts:ns:group.work.version.exemplar:passage"))
 	// displayUrn is what will be shown
 	val displayUrn = Var(CtsUrn("urn:cts:ns:group.work.version.exemplar:passage"))
-	val versionsForCurrentUrn = Var(1)
+	//val versionsForCurrentUrn = Var(1)
 
 	val userMessage = Var("")
 	val userAlert = Var("default")
@@ -89,6 +91,7 @@ object O2Model {
 	}
 
 	def getPrevNextUrn(urn:CtsUrn, boundCorp:BoundCorpus):Unit = {
+		g.console.log(s"starting GetPrevNextUrn with ${urn}")
 		boundCorp.currentPrev.value = O2Model.textRepo.value.get.corpus.prevUrn(urn)
 		boundCorp.currentNext.value = O2Model.textRepo.value.get.corpus.nextUrn(urn)
 	}
@@ -128,9 +131,13 @@ object O2Model {
 		}
 	}
 
+	def replaceTextInCurrentCorpus(vCorp:O2Model.BoundCorpus):Unit = {
+
+	}
+
 	def updateCurrentCorpus(c:Corpus, u:CtsUrn):Unit = {
 		try {
-			O2Model.currentCorpus.value.clear
+			//O2Model.currentCorpus.value.clear
 			if (O2Model.textRepo.value != None) {
 				// Since GroupBy doesn't preserve order, let's preserve our own order
 				val versionLevelOrder:Vector[CtsUrn] = {
@@ -177,8 +184,15 @@ object O2Model {
 						for (n <- b._2) tempNodesVec.value += n
 						tempNodeBlockVec.value += VersionNodeBlock(tempBlockUrn, tempNodesVec)
 					}
-					O2Model.currentCorpus.value += BoundCorpus(boundVersionUrn, boundVersionLabel, tempNodeBlockVec)
+					val newBoundCorpus:BoundCorpus = BoundCorpus(boundVersionUrn, boundVersionLabel, tempNodeBlockVec) 
+					O2Model.currentCorpus.value += newBoundCorpus
+					g.console.log("in updateCurrentCorpus")
+					val task = Task{ O2Model.getPrevNextUrn(newBoundCorpus.versionUrn.value, newBoundCorpus) }
+					val future = task.runAsync
+					val task2 = Task { newBoundCorpus.versionsAvailable.value = O2Model.versionsForUrn(newBoundCorpus.versionUrn.value) }
+					val future2 = task2.runAsync
 				}	
+
 			}
 
 		} catch {
@@ -211,7 +225,7 @@ object O2Model {
 	@dom
 	def clearPassage:Unit = {
 		//O2Model.xmlPassage.innerHTML = ""
-		O2Model.versionsForCurrentUrn.value = 0
+		//O2Model.versionsForCurrentUrn.value = 0
 		O2Model.currentListOfUrns.value.clear
 		O2Model.currentCorpus.value.clear
 	}
