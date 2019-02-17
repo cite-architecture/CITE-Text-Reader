@@ -91,7 +91,6 @@ object O2Model {
 	}
 
 	def getPrevNextUrn(urn:CtsUrn, boundCorp:BoundCorpus):Unit = {
-		g.console.log(s"starting GetPrevNextUrn with ${urn}")
 		boundCorp.currentPrev.value = O2Model.textRepo.value.get.corpus.prevUrn(urn)
 		boundCorp.currentNext.value = O2Model.textRepo.value.get.corpus.nextUrn(urn)
 	}
@@ -131,8 +130,26 @@ object O2Model {
 		}
 	}
 
-	def replaceTextInCurrentCorpus(vCorp:O2Model.BoundCorpus):Unit = {
+	def removeTextFromCurrentCorpus(urn:CtsUrn):Unit = {
+		try {
+			val tempCorpus:Vector[O2Model.BoundCorpus] = {
+				O2Model.currentCorpus.value.toVector.filter( vc => (urn >= vc.versionUrn.value) == false )
+			}
+			O2Model.currentCorpus.value.clear
+			for ( tc <- tempCorpus){
+				O2Model.currentCorpus.value += tc 
+			}	
 
+		} catch {
+			case e:Exception => {
+				O2Controller.updateUserMessage(s"O2Model Exception in 'removeTextFromCurrentCorpus': ${e}",2)
+			}
+		}
+	}
+
+	def updateTextInCurrentCorpus(urn:CtsUrn):Unit = {
+		removeTextFromCurrentCorpus(urn.dropPassage)	
+		displayPassage(urn)	
 	}
 
 	def updateCurrentCorpus(c:Corpus, u:CtsUrn):Unit = {
@@ -185,8 +202,18 @@ object O2Model {
 						tempNodeBlockVec.value += VersionNodeBlock(tempBlockUrn, tempNodesVec)
 					}
 					val newBoundCorpus:BoundCorpus = BoundCorpus(boundVersionUrn, boundVersionLabel, tempNodeBlockVec) 
-					O2Model.currentCorpus.value += newBoundCorpus
-					g.console.log("in updateCurrentCorpus")
+
+
+				//	O2Model.currentCorpus.value += newBoundCorpus
+
+					/* Sort corpora */
+					val sortingCorpus:Vector[BoundCorpus] = O2Model.currentCorpus.value.toVector ++ Vector(newBoundCorpus)
+					val sortedCorpora:Vector[BoundCorpus] = sortingCorpus.sortBy(_.versionUrn.value.toString)
+					O2Model.currentCorpus.value.clear
+					for ( tc <- sortedCorpora){
+						O2Model.currentCorpus.value += tc 
+					}
+
 					val task = Task{ O2Model.getPrevNextUrn(newBoundCorpus.versionUrn.value, newBoundCorpus) }
 					val future = task.runAsync
 					val task2 = Task { newBoundCorpus.versionsAvailable.value = O2Model.versionsForUrn(newBoundCorpus.versionUrn.value) }

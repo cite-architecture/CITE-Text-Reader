@@ -282,10 +282,11 @@ div.o2_citationBlock p.long {
 div.o2_versionContainer {
 	max-width: 40em;
 	float: left;
-	margin-right: 2em;
+	margin-right: 1em;
 	margin-top: 15px;
 	background-color: #fcfcfc;
-	padding: 4px;
+	padding: 10px;
+	border: 1px solid #ddd;
 }
 
 .oneOf1 {
@@ -303,7 +304,7 @@ div.o2_versionContainer {
 
 .oneOf4 {
 	width: 22%;
-	font-size: 85%;
+	font-size: 80%;
 }
 
 .o2_passage {

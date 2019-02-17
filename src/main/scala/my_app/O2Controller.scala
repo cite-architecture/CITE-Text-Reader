@@ -72,11 +72,11 @@ object O2Controller {
 	}
 
 	def getPrev(vCorp:O2Model.BoundCorpus):Unit = {
-		g.console.log(s"Will get prev for text: ${vCorp.versionUrn.value}")
+		O2Model.updateTextInCurrentCorpus(vCorp.currentPrev.value.get)
 	}
 
 	def getNext(vCorp:O2Model.BoundCorpus):Unit = {
-		g.console.log(s"Will get next for text: ${vCorp.versionUrn.value}")
+		O2Model.updateTextInCurrentCorpus(vCorp.currentNext.value.get)
 	}
 
 	def getNext:Unit = {

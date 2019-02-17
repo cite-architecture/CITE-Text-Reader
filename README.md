@@ -1,8 +1,8 @@
 # CITE Text Reader
 
-A bare-bones skeleton for a CITE Reading Environment as a ScalaJS app.
+A basic CITE Reading Environment as a ScalaJS app. Load multiple texts in parallel, navigate them independently.
 
-## Current version: 0.0.3
+## Current version: 1.0.0
 
 See [release notes](releases.md).
 
