@@ -27,7 +27,7 @@ object MainModel {
 		var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
 
 		val welcomeMessage = Var("")
-		val requestParameterUrn = Var[Option[Urn]](None)
+		val requestParameterUrn = Var[Option[Vector[CtsUrn]]](None)
 
 		val cexMainDelimiter:String = "#"
 		val cexSecondaryDelimiter:String = ","

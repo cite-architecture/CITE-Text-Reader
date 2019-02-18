@@ -2,7 +2,13 @@
 
 A basic CITE Reading Environment as a ScalaJS app. Load multiple texts in parallel, navigate them independently.
 
-## Current version: 1.0.0
+Accepts multiple CTS URNs as request-parameters, *e.g.* 
+
+~~~
+reader-1.1.0.html?urn=urn:cts:greekLit:tlg0016.tlg001.grc:1.2&urn=urn:cts:latinLit:phi1038.phi001.omar:1.pr.1
+~~~
+
+## Current version: 1.1.0
 
 See [release notes](releases.md).
 

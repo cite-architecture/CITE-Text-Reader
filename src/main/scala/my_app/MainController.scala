@@ -69,6 +69,15 @@ object MainController {
 				val contents:String = xhr.responseText
 				MainModel.requestParameterUrn.value = MainController.getRequestUrn
 				MainController.updateRepository(contents)
+				// Load request params if possible
+				MainModel.requestParameterUrn.value match {
+					case Some(rqv) => {
+						for (u <- rqv) {
+							O2Model.displayPassage(u)
+						}	
+					}
+					case None =>
+				}
 			} else {
 				MainController.updateUserMessage(s"Request for remote library failed with code ${xhr.status}",2)
 			}
@@ -94,45 +103,36 @@ object MainController {
 		Gets the http url and splits off any request parameter, parsing
 		it as a CTS or CITE2 URN if possible
 	*/	
-	def getRequestUrn:Option[Urn] = {
+	def getRequestUrn:Option[Vector[CtsUrn]] = {
 		val currentUrl = 	js.Dynamic.global.location.href
 		val requestParamUrnString = currentUrl.toString.split('?')
-		val requestUrn:Option[Urn] = requestParamUrnString.size match {
+		val requestUrn:Option[Vector[CtsUrn]] = requestParamUrnString.size match {
 			case s if (s > 1) => {
 				try {
-					val parts = requestParamUrnString(1).split("=")
-					if ( parts.size > 1) {
-						if ( parts(0) == "urn" ) {
-							val decryptedString:String = js.URIUtils.decodeURIComponent(parts(1))
-							val decryptedUrn:Option[Urn] = {
-								parts(1).take(8) match {
-									case ("urn:cts:") => Some(CtsUrn(decryptedString))
-									case ("urn:cite") => Some(Cite2Urn(decryptedString).dropProperty)
-										case _ => {
-											None
-										}
-									}
-								}
-								decryptedUrn
-							} else {
-								None
-							}
-						} else {
-							None
+					val parts = requestParamUrnString(1).split("&")
+					if ( parts.size > 0) {
+						val sv:Vector[String] = parts.map(_.replaceAll("urn=","")).filter(_.size > 0).filter(_.take(8) == "urn:cts:").toVector
+						val uv:Vector[CtsUrn] = sv.map(CtsUrn(_))
+						uv.size match {
+							case n if (n > 0) => Some(uv)
+							case _ => None
 						}
-					} catch {
-						case e:Exception => {
-							MainController.updateUserMessage(s"Failed to load request-parameter URN: ${e}",1)
-							None
-						}
+					} else {
+						None
+					}
+				} catch {
+					case e:Exception => {
+						MainController.updateUserMessage(s"Failed to load request-parameter URN: ${e}",1)
+						None
 					}
 				}
-				case _  => {
-					None
-				}
 			}
-			requestUrn
+			case _  => {
+				None
+			}
 		}
+		requestUrn
+	}
 
 	// Reads CEX file, creates repositories for Texts, Objects, and Images
 	// *** Apropos Microservice ***

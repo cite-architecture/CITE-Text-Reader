@@ -147,9 +147,9 @@ object O2Model {
 		}
 	}
 
-	def updateTextInCurrentCorpus(urn:CtsUrn):Unit = {
-		removeTextFromCurrentCorpus(urn.dropPassage)	
-		displayPassage(urn)	
+	def updateTextInCurrentCorpus(oldurn:CtsUrn, newurn:CtsUrn):Unit = {
+		removeTextFromCurrentCorpus(oldurn)	
+		displayPassage(newurn)	
 	}
 
 	def updateCurrentCorpus(c:Corpus, u:CtsUrn):Unit = {

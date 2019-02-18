@@ -53,7 +53,7 @@ object MainView {
 	@dom
 	def footer = {
 		<p>
-		CITE/CTS is ©2002–2019 Neel Smith and Christopher Blackwell. 
+		CITE/CTS is ©2002–2019 Neel Smith and Christopher Blackwell. Licensed under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL 3.0</a>. Sourcecode on <a href="https://github.com/cite-architecture/CITE-Text-Reader">GitHub</a>.
 		</p>
 	}
 

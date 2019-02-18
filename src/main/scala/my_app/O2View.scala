@@ -117,7 +117,7 @@ def seeAllVersionsButton(vCorp:O2Model.BoundCorpus) = {
 		onclick = { event: Event => {
 				O2Model.displayUrn.value = O2Model.collapseToWorkUrn(O2Model.urn.value)
 				//O2Model.displaynewpassage(O2Model.displayUrn.value)
-				O2Model.updateTextInCurrentCorpus(O2Model.collapseToWorkUrn(O2Model.urn.value))
+				O2Model.updateTextInCurrentCorpus(vCorp.versionUrn.value, O2Model.collapseToWorkUrn(O2Model.urn.value))
 		}}
 	>
 		See All Versions of Passage

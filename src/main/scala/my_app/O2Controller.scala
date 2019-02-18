@@ -72,11 +72,11 @@ object O2Controller {
 	}
 
 	def getPrev(vCorp:O2Model.BoundCorpus):Unit = {
-		O2Model.updateTextInCurrentCorpus(vCorp.currentPrev.value.get)
+		O2Model.updateTextInCurrentCorpus(vCorp.versionUrn.value, vCorp.currentPrev.value.get)
 	}
 
 	def getNext(vCorp:O2Model.BoundCorpus):Unit = {
-		O2Model.updateTextInCurrentCorpus(vCorp.currentNext.value.get)
+		O2Model.updateTextInCurrentCorpus(vCorp.versionUrn.value, vCorp.currentNext.value.get)
 	}
 
 	def getNext:Unit = {
