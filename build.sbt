@@ -2,9 +2,9 @@ enablePlugins(ScalaJSPlugin, BuildInfoPlugin)
 
 name := "reader"
 
-version := "1.2.0"
+version := "1.2.1"
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.8"
 
 resolvers += Resolver.jcenterRepo
 resolvers += Resolver.bintrayRepo("neelsmith", "maven")
@@ -13,7 +13,7 @@ resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases")
 
 libraryDependencies ++= Seq(
   "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided",
-  "org.scala-js" %%% "scalajs-dom" % "0.9.5",
+  "org.scala-js" %%% "scalajs-dom" % "0.9.6",
   "io.monix" %%% "monix" % "2.3.0",
   "edu.holycross.shot.cite" %%% "xcite" % "3.7.0",
   "edu.holycross.shot" %%% "ohco2" % "10.11.1",

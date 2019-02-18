@@ -1,5 +1,7 @@
 # Release notes
 
+**1.2.1**: Updated Scala to 1.12.8 and ScalaJS-Dom to 0.9.6.
+
 **1.2.0**: As a first step toward an alignment-reader, allow clickable highlighting of citable nodes. Fixed a bug with "all versions of text" when a text was pre-loaded from a request parameter.
 
 **1.1.0**: Allow more than one view of the same text; accepts multiple CtsUrns as request-parameters with `?urn=…&urn=…`.
