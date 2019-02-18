@@ -1,3 +1,5 @@
+**THIS ARCHIVE HAS BEEN ARCHIVED AND REPLACED BY cite-architecture/Cite-Text-Reader2**
+
 # CITE Text Reader
 
 A basic CITE Reading Environment as a ScalaJS app. Load multiple texts in parallel, navigate them independently.
